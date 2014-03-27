@@ -244,6 +244,7 @@ struct msm_fb_data_type {
 	 */
 	struct workqueue_struct *unblank_kworker;
 	struct work_struct unblank_work;
+	struct dma_buf *fbmem_buf;
 };
 
 static inline void mdss_fb_update_notify_update(struct msm_fb_data_type *mfd)
