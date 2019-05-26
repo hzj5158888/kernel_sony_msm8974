@@ -74,7 +74,7 @@
 			gpio_tirq = <61>;
 			gpio_reset = <85>;
 			reset_l2h = <0>;
-			enable_resume_por = <1>;
+			enable_resume_por = <0>;
 			defaults_allow = <0>;
 			default_config_id = <0>;
 			default_chip_id = <0>;
@@ -96,7 +96,6 @@
 			touch_pressure_enabled = <1>;
 			touch_size_enabled = <0>;
 			touch_orientation_enabled = <0>;
-			glove_enabled = <0>;
 			report_pen_as_finger = <1>;
 			wakeup_gesture_support = <0>;
 			wakeup_gesture_timeout = <0>;
