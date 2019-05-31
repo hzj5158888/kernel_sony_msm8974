@@ -1,5 +1,5 @@
 /* Copyright (c) 2012, Code Aurora Forum. All rights reserved.
- * Copyright (C) 2012-2013 Sony Mobile Communications AB.
+ * Copyright (C) 2012-2014 Sony Mobile Communications AB.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -128,7 +128,7 @@
 		qcom,mdss-dsi-t-clk-post = <0x03>;
 		qcom,mdss-dsi-t-clk-pre = <0x31>;
 		qcom,mdss-dsi-bl-min-level = <1>;
-		qcom,mdss-dsi-bl-max-level = <255>;
+		qcom,mdss-dsi-bl-max-level = <4095>;
 		qcom,mdss-dsi-dma-trigger = "trigger_sw";
 		qcom,mdss-dsi-mdp-trigger = "none";
 		qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_wled";
@@ -271,7 +271,7 @@
 		qcom,mdss-dsi-t-clk-post = <0x03>;
 		qcom,mdss-dsi-t-clk-pre = <0x31>;
 		qcom,mdss-dsi-bl-min-level = <1>;
-		qcom,mdss-dsi-bl-max-level = <255>;
+		qcom,mdss-dsi-bl-max-level = <4095>;
 		qcom,mdss-dsi-dma-trigger = "trigger_sw";
 		qcom,mdss-dsi-mdp-trigger = "none";
 		qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_wled";
@@ -471,7 +471,7 @@
 		qcom,mdss-dsi-t-clk-post = <0x03>;
 		qcom,mdss-dsi-t-clk-pre = <0x31>;
 		qcom,mdss-dsi-bl-min-level = <1>;
-		qcom,mdss-dsi-bl-max-level = <255>;
+		qcom,mdss-dsi-bl-max-level = <4095>;
 		qcom,mdss-dsi-dma-trigger = "trigger_sw";
 		qcom,mdss-dsi-mdp-trigger = "none";
 		qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_wled";
@@ -479,7 +479,7 @@
 		qcom,mdss-dsi-pan-fps-update = "dfps_suspend_resume_mode";
 		qcom,mdss-dsi-reset-sequence = <1 20>, <0 200>, <1 20>;
 
-		qcom,mdss-brightness-max-level = <255>;
+		qcom,mdss-brightness-max-level = <4095>;
 		somc,panel-id = [12 74 20 38];
 		somc,driver-ic = <0>;
 		somc,disp-en-off-pre = <10>;
@@ -1008,7 +1008,7 @@
 		qcom,mdss-dsi-t-clk-post = <0x1e>;
 		qcom,mdss-dsi-t-clk-pre = <0x37>;
 		qcom,mdss-dsi-bl-min-level = <1>;
-		qcom,mdss-dsi-bl-max-level = <255>;
+		qcom,mdss-dsi-bl-max-level = <4095>;
 		qcom,mdss-dsi-dma-trigger = "trigger_sw";
 		qcom,mdss-dsi-mdp-trigger = "none";
 		qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_wled";
@@ -1026,7 +1026,7 @@
 		somc,pw-on-rst-seq = <1 10>, <0 10>, <1 25>;
 		somc,pw-off-rst-seq = <0 10>;
 
-		qcom,mdss-brightness-max-level = <255>;
+		qcom,mdss-brightness-max-level = <4095>;
 		somc,driver-ic = <1>;
 		somc,dric-gpio = <&msmgpio 26 0>;
 		somc,mdss-phy-size-mm = <80 143>;
@@ -1039,7 +1039,7 @@
 		somc,mdss-dsi-wait-time-before-on-cmd = <80>;
 	};
 
-        dsi_novatek_auo_1080_vid: somc,novatek_auo_1080p_panel {
+	dsi_novatek_auo_1080_vid: somc,novatek_auo_1080p_panel {
 		qcom,mdss-dsi-panel-name = "auo novatek 1080p video";
 		qcom,mdss-dsi-panel-controller = <&mdss_dsi0>;
 		qcom,mdss-dsi-panel-type = "dsi_video_mode";
@@ -1489,7 +1489,7 @@
 		qcom,mdss-dsi-t-clk-post = <0x1e>;
 		qcom,mdss-dsi-t-clk-pre = <0x37>;
 		qcom,mdss-dsi-bl-min-level = <1>;
-		qcom,mdss-dsi-bl-max-level = <255>;
+		qcom,mdss-dsi-bl-max-level = <4095>;
 		qcom,mdss-dsi-dma-trigger = "trigger_sw";
 		qcom,mdss-dsi-mdp-trigger = "none";
 		qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_wled";
@@ -1515,7 +1515,7 @@
 		somc,mdss-dsi-disp-on-in-hs = <1>;
 		somc,mdss-dsi-wait-time-before-on-cmd = <80>;
 
-		qcom,mdss-brightness-max-level = <255>;
+		qcom,mdss-brightness-max-level = <4095>;
 		somc,mdss-dsi-pre-uv-command = [23 01 00 00 00 00 02 B0 04];
 		somc,mdss-dsi-uv-command = [04 01 00 00 00 00 01 04];
 		somc,mdss-dsi-uv-param-type = <3>;
