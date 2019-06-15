@@ -62,13 +62,6 @@ static atomic_t kp_taiko_priv;
 static int spkr_drv_wrnd_param_set(const char *val,
 				   const struct kernel_param *kp);
 static int spkr_drv_wrnd = 1;
-<<<<<<< HEAD
-=======
-static int high_perf_mode = 1;
-module_param(high_perf_mode, int,
-			S_IRUGO | S_IWUSR | S_IWGRP);
-MODULE_PARM_DESC(high_perf_mode, "enable/disable class AB config for hph");
->>>>>>> e35f1ed28a5... ASoC: wcd9320: Enable high perf mode by default
 
 static struct kernel_param_ops spkr_drv_wrnd_param_ops = {
 	.set = spkr_drv_wrnd_param_set,
