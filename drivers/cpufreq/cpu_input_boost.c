@@ -20,6 +20,7 @@
 #include <linux/slab.h>
 
 #define FB_BOOST_MS 1100
+#define LMK_BOOST_MS 1000
 
 enum boost_status {
 	UNBOOST,
@@ -28,6 +29,12 @@ enum boost_status {
 };
 
 struct fb_policy {
+	struct work_struct boost_work;
+	struct delayed_work unboost_work;
+	enum boost_status state;
+};
+
+struct lmk_policy {
 	struct work_struct boost_work;
 	struct delayed_work unboost_work;
 	enum boost_status state;
@@ -56,6 +63,7 @@ struct boost_policy {
 	spinlock_t lock;
 	struct fb_policy fb;
 	struct ib_config ib;
+	struct lmk_policy lmk;
 	struct workqueue_struct *wq;
 	uint8_t enabled;
 };
@@ -65,8 +73,10 @@ static struct boost_policy *boost_policy_g;
 static void boost_cpu0(struct boost_policy *b);
 static bool is_driver_enabled(struct boost_policy *b);
 static bool is_fb_boost_active(struct boost_policy *b);
+static bool is_lmk_boost_active(struct boost_policy *b);
 static void set_fb_state(struct boost_policy *b, enum boost_status state);
 static void set_ib_status(struct boost_policy *b, enum boost_status status);
+static void set_lmk_state(struct boost_policy *b, enum boost_status state);
 static void unboost_all_cpus(struct boost_policy *b);
 static void unboost_cpu(struct ib_pcpu *pcpu);
 
@@ -149,6 +159,32 @@ static void fb_unboost_main(struct work_struct *work)
 	unboost_all_cpus(b);
 }
 
+static void lmk_boost_main(struct work_struct *work)
+{
+	struct boost_policy *b = boost_policy_g;
+	uint32_t cpu;
+
+	/* All CPUs will be boosted to policy->max */
+	set_lmk_state(b, BOOST);
+
+	/* Immediately boost the online CPUs to policy->max */
+	get_online_cpus();
+	for_each_online_cpu(cpu)
+		cpufreq_update_policy(cpu);
+	put_online_cpus();
+
+	queue_delayed_work(b->wq, &b->lmk.unboost_work,
+				msecs_to_jiffies(LMK_BOOST_MS));
+}
+
+static void lmk_unboost_main(struct work_struct *work)
+{
+	struct boost_policy *b = boost_policy_g;
+
+	set_lmk_state(b, UNBOOST);
+	unboost_all_cpus(b);
+}
+
 static void ib_reboost_main(struct work_struct *work)
 {
 	struct boost_policy *b = boost_policy_g;
@@ -178,6 +214,11 @@ static int do_cpu_boost(struct notifier_block *nb,
 		return NOTIFY_OK;
 
 	if (is_fb_boost_active(b)) {
+		policy->min = policy->max;
+		return NOTIFY_OK;
+	}
+
+	if (is_lmk_boost_active(b)) {
 		policy->min = policy->max;
 		return NOTIFY_OK;
 	}
@@ -236,6 +277,23 @@ static struct notifier_block fb_boost_nb = {
 	.priority	= INT_MAX,
 };
 
+void lmk_boost_kick(void)
+{
+	int __lmk_boost_kick;
+	struct boost_policy *b = boost_policy_g;
+
+	__lmk_boost_kick;
+}
+
+static int __lmk_boost_kick(struct boost_policy *b)
+{
+	/* Framebuffer boost is already in progress */
+	if (is_fb_boost_active(b))
+		return;
+
+	queue_work(b->wq, &b->lmk.boost_work);
+}
+
 static void cpu_ib_input_event(struct input_handle *handle, unsigned int type,
 		unsigned int code, int value)
 {
@@ -245,7 +303,7 @@ static void cpu_ib_input_event(struct input_handle *handle, unsigned int type,
 
 	spin_lock(&b->lock);
 	ib_status = b->ib.running;
-	do_boost = b->enabled && !b->fb.state && (ib_status != REBOOST);
+	do_boost = b->enabled && !b->fb.state && !b->lmk.state && (ib_status != REBOOST);
 	spin_unlock(&b->lock);
 
 	if (!do_boost)
@@ -366,10 +424,28 @@ static bool is_fb_boost_active(struct boost_policy *b)
 	return ret;
 }
 
+static bool is_lmk_boost_active(struct boost_policy *b)
+{
+	bool ret;
+
+	spin_lock(&b->lock);
+	ret = b->lmk.state;
+	spin_unlock(&b->lock);
+
+	return ret;
+}
+
 static void set_fb_state(struct boost_policy *b, enum boost_status state)
 {
 	spin_lock(&b->lock);
 	b->fb.state = state;
+	spin_unlock(&b->lock);
+}
+
+static void set_lmk_state(struct boost_policy *b, enum boost_status state)
+{
+	spin_lock(&b->lock);
+	b->lmk.state = state;
 	spin_unlock(&b->lock);
 }
 
@@ -424,8 +500,10 @@ static ssize_t enabled_write(struct device *dev,
 	/* Ensure that everything is stopped when returning from here */
 	if (!data) {
 		cancel_work_sync(&b->fb.boost_work);
+		cancel_work_sync(&b->lmk.boost_work);
 		cancel_work_sync(&b->ib.boost_work);
 		set_fb_state(b, UNBOOST);
+		set_lmk_state(b, UNBOOST);
 		unboost_all_cpus(b);
 	}
 
@@ -581,6 +659,8 @@ static int __init cpu_ib_init(void)
 
 	INIT_WORK(&b->fb.boost_work, fb_boost_main);
 	INIT_DELAYED_WORK(&b->fb.unboost_work, fb_unboost_main);
+	INIT_WORK(&b->lmk.boost_work, lmk_boost_main);
+	INIT_DELAYED_WORK(&b->lmk.unboost_work, lmk_unboost_main);
 	INIT_WORK(&b->ib.boost_work, ib_boost_main);
 	INIT_WORK(&b->ib.reboost_work, ib_reboost_main);
 
