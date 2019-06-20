@@ -444,6 +444,7 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 	}
 	selected_oom_score_adj = min_score_adj;
 
+	lmk_boost_kick;
 	rcu_read_lock();
 	for_each_process(tsk) {
 		struct task_struct *p;
@@ -498,7 +499,7 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 		lowmem_print(3, "select '%s' (%d), adj %hd, size %d, to kill\n",
 			     p->comm, p->pid, oom_score_adj, tasksize);
 	}
-	lmk_boost_kick;
+
 	if (selected) {
 		lowmem_print(1, "Killing '%s' (%d), adj %d,\n" \
 				"   to free %ldkB on behalf of '%s' (%d) because\n" \
