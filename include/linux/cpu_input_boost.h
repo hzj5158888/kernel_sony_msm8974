@@ -7,6 +7,7 @@
 
 #ifdef CONFIG_CPU_INPUT_BOOST
 void lmk_boost_kick(void);
+void lmk_boost_stop_kick(void);
 #else
 static inline void lmk_boost_kick(void)
 {

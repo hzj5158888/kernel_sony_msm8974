@@ -18,9 +18,10 @@
 #include <linux/fb.h>
 #include <linux/input.h>
 #include <linux/slab.h>
+#include <linux/cpu_input_boost.h>
 
 #define FB_BOOST_MS 1100
-#define LMK_BOOST_MS 1000
+#define LMK_BOOST_MS 500
 
 enum boost_status {
 	UNBOOST,
@@ -172,6 +173,11 @@ static void lmk_boost_main(struct work_struct *work)
 	for_each_online_cpu(cpu)
 		cpufreq_update_policy(cpu);
 	put_online_cpus();
+}
+
+static void lmk_boost_stop(struct work_struct *work)
+{
+	struct boost_policy *b = boost_policy_g;
 
 	queue_delayed_work(b->wq, &b->lmk.unboost_work,
 				msecs_to_jiffies(LMK_BOOST_MS));
@@ -283,6 +289,11 @@ void lmk_boost_kick(void)
 	struct boost_policy *b = boost_policy_g;
 
 	__lmk_boost_kick;
+}
+
+void lmk_boost_stop_kick(void)
+{
+	lmk_boost_stop;
 }
 
 static int __lmk_boost_kick(struct boost_policy *b)
