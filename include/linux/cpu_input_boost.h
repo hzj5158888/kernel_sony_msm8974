@@ -12,6 +12,9 @@ void lmk_boost_stop_kick(void);
 static inline void lmk_boost_kick(void)
 {
 }
+static inline void lmk_boost_stop_kick(void)
+{
+}
 #endif
 
 #endif /* _CPU_INPUT_BOOST_H_ */
