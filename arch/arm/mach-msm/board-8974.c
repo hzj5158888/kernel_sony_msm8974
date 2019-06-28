@@ -1,4 +1,6 @@
 /* Copyright (c) 2011-2013, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2013 Sony Mobile Communications AB.
+ * Copyright (C) 2009-2014 Broadcom Corporation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -49,6 +51,7 @@
 #include "modem_notifier.h"
 #include "platsmp.h"
 
+#include "board-8974-console.h"
 
 static struct memtype_reserve msm8974_reserve_table[] __initdata = {
 	[MEMTYPE_SMI] = {
@@ -161,6 +164,14 @@ static void __init msm8974_map_io(void)
 	msm_map_8974_io();
 }
 
+static struct platform_device bcm_ldisc_device = {
+	.name = "bcm_ldisc",
+	.id = -1,
+	.dev = {
+
+	},
+};
+
 void __init msm8974_init(void)
 {
 	struct of_dev_auxdata *adata = msm8974_auxdata_lookup;
@@ -171,12 +182,19 @@ void __init msm8974_init(void)
 	msm_8974_init_gpiomux();
 	regulator_has_full_constraints();
 	board_dt_populate(adata);
+	msm8974_add_devices();
 	msm8974_add_drivers();
+	platform_device_register(&bcm_ldisc_device);
 }
 
 void __init msm8974_init_very_early(void)
 {
 	msm8974_early_memory();
+}
+
+void __init msm8974_init_early(void)
+{
+	msm_reserve_last_regs();
 }
 
 static const char *msm8974_dt_match[] __initconst = {
@@ -194,6 +212,7 @@ DT_MACHINE_START(MSM8974_DT, "Qualcomm MSM 8974 (Flattened Device Tree)")
 	.dt_compat = msm8974_dt_match,
 	.reserve = msm_8974_reserve,
 	.init_very_early = msm8974_init_very_early,
+	.init_early = msm8974_init_early,
 	.restart = msm_restart,
 	.smp = &msm8974_smp_ops,
 MACHINE_END

@@ -1,4 +1,5 @@
 /* Copyright (c) 2011-2013, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2014 Sony Mobile Communications Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -127,6 +128,19 @@ static int msm_ipc_router_smd_remote_write_avail(
 		container_of(xprt, struct msm_ipc_router_smd_xprt, xprt);
 
 	return smd_write_avail(smd_xprtp->channel);
+}
+
+static int is_ss_reset(struct msm_ipc_router_smd_xprt *smd_xprtp)
+{
+	unsigned long flags;
+	spin_lock_irqsave(&smd_xprtp->ss_reset_lock, flags);
+	if (smd_xprtp->ss_reset) {
+		spin_unlock_irqrestore(&smd_xprtp->ss_reset_lock,
+					flags);
+		return 1;
+	}
+	spin_unlock_irqrestore(&smd_xprtp->ss_reset_lock, flags);
+	return 0;
 }
 
 static int msm_ipc_router_smd_remote_write(void *data,
