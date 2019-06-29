@@ -43,6 +43,7 @@
 #include <mach/rpm-regulator-smd.h>
 #include <mach/socinfo.h>
 #include <mach/msm_smem.h>
+#include <mach/msm_memory_dump.h>
 #include "board-dt.h"
 #include "clock.h"
 #include "devices.h"
@@ -182,7 +183,7 @@ void __init msm8974_init(void)
 	msm_8974_init_gpiomux();
 	regulator_has_full_constraints();
 	board_dt_populate(adata);
-	msm8974_add_devices();
+	//msm8974_add_devices();
 	msm8974_add_drivers();
 	platform_device_register(&bcm_ldisc_device);
 }
