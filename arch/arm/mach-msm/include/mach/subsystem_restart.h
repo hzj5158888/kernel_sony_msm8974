@@ -72,6 +72,7 @@ struct subsys_desc {
 #if defined(CONFIG_MSM_SUBSYSTEM_RESTART)
 
 extern int subsys_get_restart_level(struct subsys_device *dev);
+extern void subsys_set_restart_level(struct subsys_device *dev, int new_level);
 extern int subsystem_restart_dev(struct subsys_device *dev);
 extern int subsystem_restart(const char *name);
 extern int subsystem_crashed(const char *name);
@@ -92,7 +93,8 @@ static inline int subsys_get_restart_level(struct subsys_device *dev)
 {
 	return 0;
 }
-
+static inline void subsys_set_restart_level(struct subsys_device *dev,
+						int new_level) {}
 static inline int subsystem_restart_dev(struct subsys_device *dev)
 {
 	return 0;

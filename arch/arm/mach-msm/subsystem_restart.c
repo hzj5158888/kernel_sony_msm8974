@@ -35,6 +35,8 @@
 #include <linux/interrupt.h>
 #include <linux/of_gpio.h>
 
+#include <linux/poll.h>
+#include <linux/wait.h>
 #include <asm/current.h>
 
 #include <mach/socinfo.h>
