@@ -1618,7 +1618,7 @@ static void get_uv_data(struct mdss_dsi_ctrl_pdata *ctrl_pdata,
 	len = get_uv_param_len(param_type, &short_response);
 
 	mdss_dsi_cmd_mdp_busy(ctrl_pdata);
-	mdss_bus_bandwidth_ctrl(1);
+	mdss_bus_bandwidth_ctrl(true);
 	mdss_dsi_clk_ctrl(ctrl_pdata, DSI_ALL_CLKS, 1);
 	for (i = 0; i < ctrl_pdata->spec_pdata->uv_read_cmds.cmd_cnt; i++) {
 		if (short_response)
@@ -1630,7 +1630,7 @@ static void get_uv_data(struct mdss_dsi_ctrl_pdata *ctrl_pdata,
 		cmds++;
 	}
 	mdss_dsi_clk_ctrl(ctrl_pdata, DSI_ALL_CLKS, 0);
-	mdss_bus_bandwidth_ctrl(0);
+	mdss_bus_bandwidth_ctrl(false);
 	conv_uv_data(buf, param_type, u_data, v_data);
 }
 
