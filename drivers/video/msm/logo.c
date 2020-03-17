@@ -31,7 +31,7 @@
 #define fb_height(fb)	((fb)->var.yres)
 #define fb_depth(fb)	((fb)->var.bits_per_pixel >> 3)
 #define fb_size(fb)	(fb_width(fb) * fb_height(fb) * fb_depth(fb))
-#define INIT_IMAGE_FILE "/logo.rle"
+#define INIT_IMAGE_FILE "/sbin/logo.rle"
 
 static bool display_on_in_boot;
 
